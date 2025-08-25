@@ -3,9 +3,12 @@ package com.authservice.service;
 import com.authservice.entities.UserInfo;
 import com.authservice.model.UserInfoDto;
 import com.authservice.repository.UserRepository;
+import com.authservice.utils.ValidationUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,6 +19,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
 
+@Slf4j
 @Data
 @AllArgsConstructor
 @Component
@@ -43,13 +47,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     public Boolean signUpUser(UserInfoDto userInfoDto){
-
-        if(Objects.nonNull(checkIfUserAlreadyExists(userInfoDto))){
-            return false;
+        try {
+            ValidationUtil.validateCredentials(userInfoDto);
+            if (Objects.nonNull(checkIfUserAlreadyExists(userInfoDto))) {
+                return false;
+            }
+            userInfoDto.setPassword(passwordEncoder.encode(userInfoDto.getPassword()));
+            String userId = UUID.randomUUID().toString();
+            userRepository.save(new UserInfo(userId, userInfoDto.getUserName(), userInfoDto.getPassword(), new HashSet<>()));
+        }catch(BadCredentialsException e){
+            log.error(e.getMessage());
         }
-        userInfoDto.setPassword(passwordEncoder.encode(userInfoDto.getPassword()));
-        String userId = UUID.randomUUID().toString();
-        userRepository.save(new UserInfo(userId, userInfoDto.getUserName(), userInfoDto.getPassword(), new HashSet<>()));
         return true;
     }
 }

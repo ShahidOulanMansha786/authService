@@ -1,5 +1,8 @@
 package com.authservice.utils;
 
+import com.authservice.model.UserInfoDto;
+import org.springframework.security.authentication.BadCredentialsException;
+
 public class ValidationUtil {
     // Password Regex:
     // ^(?=.*[A-Z])      → kam se kam ek uppercase letter
@@ -20,5 +23,14 @@ public class ValidationUtil {
     // ✅ Email check
     public static boolean isValidEmail(String email) {
         return email != null && email.matches(EMAIL_PATTERN);
+    }
+
+    public static void validateCredentials(UserInfoDto userInfoDto){
+        if(!isValidPassword(userInfoDto.getPassword())){
+            throw new BadCredentialsException("Invalid username or password");
+        }
+        if(!isValidEmail(userInfoDto.getEmail())){
+            throw new BadCredentialsException("Invalid email");
+        }
     }
 }
