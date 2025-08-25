@@ -3,6 +3,7 @@ package com.authservice.controller;
 
 import com.authservice.entities.RefreshToken;
 import com.authservice.request.AuthRequestDTO;
+import com.authservice.request.RefreshTokenRequestDTO;
 import com.authservice.response.JwtResponseDTO;
 import com.authservice.service.JwtService;
 import com.authservice.service.RefreshTokenService;
@@ -15,8 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 public class TokenController {
 
     @Autowired
@@ -41,6 +43,19 @@ public class TokenController {
         }else{
             return new ResponseEntity<>("Exception in User Service", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PostMapping("auth/v1/refreshToken")
+    public JwtResponseDTO refreshToken(@RequestBody RefreshTokenRequestDTO refreshTokenRequestDTO){
+        return refreshTokenService.findByToken(refreshTokenRequestDTO.getToken())
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUserInfo)
+                .map(userInfo -> {
+                    String accessToken = jwtService.GenerateToken(userInfo.getUserName());
+                    return JwtResponseDTO.builder()
+                            .accessToken(accessToken)
+                            .token(refreshTokenRequestDTO.getToken()).build();
+                }).orElseThrow(()-> new RuntimeException("Refresh Token is not in DB..!!"));
     }
 
 
