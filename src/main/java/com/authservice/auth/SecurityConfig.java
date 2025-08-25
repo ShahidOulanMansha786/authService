@@ -34,10 +34,6 @@ public class SecurityConfig {
     @Autowired
     private final UserDetailsServiceImpl userDetailsServiceImpl;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     @Bean
     public UserDetailsService userDetailsService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
