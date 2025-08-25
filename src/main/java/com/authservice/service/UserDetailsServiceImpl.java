@@ -48,7 +48,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     public Boolean signUpUser(UserInfoDto userInfoDto){
         try {
-            ValidationUtil.validateCredentials(userInfoDto);
+            //ValidationUtil.validateCredentials(userInfoDto);
             if (Objects.nonNull(checkIfUserAlreadyExists(userInfoDto))) {
                 return false;
             }

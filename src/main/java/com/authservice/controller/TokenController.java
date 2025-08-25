@@ -2,6 +2,8 @@ package com.authservice.controller;
 
 
 import com.authservice.entities.RefreshToken;
+import com.authservice.entities.UserInfo;
+import com.authservice.repository.UserRepository;
 import com.authservice.request.AuthRequestDTO;
 import com.authservice.request.RefreshTokenRequestDTO;
 import com.authservice.response.JwtResponseDTO;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,11 +35,12 @@ public class TokenController {
 
     @PostMapping("auth/v1/login")
     public ResponseEntity AuthenticateAndGetToken(@RequestBody AuthRequestDTO authRequestDTO){
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequestDTO.getUsername(), authRequestDTO.getPassword()));
+
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequestDTO.getUserName(), authRequestDTO.getPassword()));
         if(authentication.isAuthenticated()){
-            RefreshToken refreshToken = refreshTokenService.createRefreshToken(authRequestDTO.getUsername());
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(authRequestDTO.getUserName());
             return new ResponseEntity<>(JwtResponseDTO.builder()
-                    .accessToken(jwtService.GenerateToken(authRequestDTO.getUsername()))
+                    .accessToken(jwtService.GenerateToken(authRequestDTO.getUserName()))
                     .token(refreshToken.getToken())
                     .build(), HttpStatus.OK
             );
