@@ -46,6 +46,10 @@ dependencies {
     // Spring Cloud
     implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
 
+    //kafka
+
+    implementation 'org.springframework.kafka:spring-kafka'
+
     // Database
     implementation 'mysql:mysql-connector-java:8.0.33'
 

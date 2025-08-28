@@ -1,6 +1,7 @@
 package com.authservice.service;
 
 import com.authservice.entities.UserInfo;
+import com.authservice.eventProducer.UserInfoProducer;
 import com.authservice.model.UserInfoDto;
 import com.authservice.repository.UserRepository;
 import com.authservice.utils.ValidationUtil;
@@ -30,6 +31,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private final UserInfoProducer userInfoProducer;
 
 
 
