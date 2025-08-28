@@ -59,6 +59,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             userInfoDto.setPassword(passwordEncoder.encode(userInfoDto.getPassword()));
             String userId = UUID.randomUUID().toString();
             userRepository.save(new UserInfo(userId, userInfoDto.getUserName(), userInfoDto.getPassword(), new HashSet<>()));
+            userInfoProducer.sendEventToKafka(userInfoDto);
         }catch(BadCredentialsException e){
             log.error(e.getMessage());
         }
