@@ -1,4 +1,4 @@
-package com.authservice.seriliazer;
+package com.authservice.serializer;
 
 
 import com.authservice.model.UserInfoDto;
